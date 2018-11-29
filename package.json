@@ -1,0 +1,54 @@
+{
+  "name": "hydrusrv-sync",
+  "version": "1.0.0",
+  "description": "A tool to sync content from hydrus server to hydrusrv",
+  "keywords": [
+    "hydrusrv",
+    "hydrus",
+    "hydrus network",
+    "hydrusnetwork",
+    "booru",
+    "node",
+    "nodejs"
+  ],
+  "author": "Michael Serajnik <ms@mserajnik.at>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://mserajnik@github.com/mserajnik/hydrusrv-sync.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mserajnik/hydrusrv-sync/issues"
+  },
+  "ava": {
+    "files": [
+      "tests/**/*.js"
+    ],
+    "sources": [
+      "**/*.js"
+    ],
+    "failFast": true,
+    "failWithoutAssertions": true,
+    "tap": false,
+    "compileEnhancements": true
+  },
+  "scripts": {
+    "sync": "node ./bin/sync",
+    "test": "ava --verbose"
+  },
+  "dependencies": {
+    "better-sqlite3": "^5.0.1",
+    "dotenv": "^6.1.0"
+  },
+  "devDependencies": {
+    "ava": "1.0.0-rc.2",
+    "eslint": "^5.9.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "fs-extra": "^7.0.1",
+    "nodemon": "^1.18.7"
+  }
+}

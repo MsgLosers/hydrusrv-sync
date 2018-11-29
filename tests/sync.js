@@ -1,0 +1,45 @@
+const path = require('path')
+
+const test = require('ava')
+const fse = require('fs-extra')
+
+const setup = require('./_setup')
+
+setup.setTestEnvironment()
+
+let app, db
+
+test.before(t => {
+  fse.copySync(
+    path.resolve(__dirname, 'storage/content.db.template'),
+    path.resolve(__dirname, `storage/content.db`)
+  )
+
+  app = require('../app')
+  db = require('../src/db')
+
+  db.connect()
+})
+
+test.serial('sync: run', t => {
+  app.runSync()
+
+  t.deepEqual(
+    db.hydrusrv.prepare(
+      `SELECT COUNT(*) FROM hydrusrv_namespaces
+        UNION
+      SELECT COUNT(*) FROM hydrusrv_tags
+        UNION
+      SELECT COUNT(*) FROM hydrusrv_files
+        UNION
+      SELECT COUNT(*) FROM hydrusrv_mappings`
+    ).pluck().all(),
+    [1, 5, 10, 20]
+  )
+})
+
+test.after(t => {
+  db.close()
+
+  fse.removeSync(path.resolve(__dirname, `storage/content.db`))
+})

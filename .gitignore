@@ -1,0 +1,7 @@
+/node_modules
+/tests/storage/*.db
+/.env
+/.sync-lock
+*.db-journal
+*.db-shm
+*.db-wal
