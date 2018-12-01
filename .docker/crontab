@@ -1,0 +1,1 @@
+DOCKER_CRON_SCHEDULE node /usr/src/app/bin/sync
