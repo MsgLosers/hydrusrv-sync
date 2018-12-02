@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.1.0] - 2018-12-02
+
 ### Changed
 
 + Reduced Docker image size
@@ -21,4 +23,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Initial release
 
-[Unreleased]: https://github.com/mserajnik/hydrusrv-sync/compare/1.0.0...develop
+[Unreleased]: https://github.com/mserajnik/hydrusrv-sync/compare/1.1.0...develop
+[1.1.0]: https://github.com/mserajnik/hydrusrv-sync/compare/1.0.0...1.1.0
