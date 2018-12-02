@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
++ Fixed letter case in readme
+
 ## 1.0.0 - 2018-12-01
 
 ### Added
