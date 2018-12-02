@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
++ Reduced Docker image size
+
 ### Fixed
 
 + Fixed letter case in readme

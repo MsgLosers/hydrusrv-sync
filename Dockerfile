@@ -1,7 +1,5 @@
 FROM mhart/alpine-node:11
 
-RUN apk --update add build-base python
-
 RUN wget https://github.com/aptible/supercronic/releases/download/v0.1.6/supercronic-linux-amd64 \
   && cp supercronic-linux-amd64 /usr/local/bin/supercronic \
   && chmod +x /usr/local/bin/supercronic \
@@ -23,17 +21,15 @@ RUN \
 
 WORKDIR /usr/src/app
 
-COPY package.json ./
-COPY yarn.lock ./
-
-RUN yarn
-
 COPY . .
+
+RUN apk --no-cache add build-base python && \
+  yarn --prod && \
+  apk del build-base python && \
+  chown -R hydrus:hydrus /usr/src/app && \
+  mkdir /data && chown -R hydrus:hydrus /data
+
 COPY .docker/crontab crontab
-
-RUN chown -R hydrus:hydrus /usr/src/app
-
-RUN mkdir /data && chown -R hydrus:hydrus /data
 
 COPY .docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 RUN chmod +x /usr/local/bin/docker-entrypoint
