@@ -62,7 +62,7 @@ user@local:hydrusrv-sync$ yarn
 Always make sure to run `yarn` after updating to install any packages you might
 be missing.
 
-hydrusrv-sync follows [Semantic Versioning][semantic-versioning] and any
+hydrusrv-sync follows [semantic versioning][semantic-versioning] and any
 breaking changes that require additional attention will be released under a new
 major version (e.g., `2.0.0`). Minor version updates (e.g., `1.1.0` or `1.2.0`)
 are therefore always safe to simply install via the routine mentioned before.
