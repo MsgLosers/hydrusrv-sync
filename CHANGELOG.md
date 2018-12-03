@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 + File hashes in hex form are now computed on sync via SQLite's `HEX()`
   function (in combination with `LOWER()`) for increased performance in
   hydrusrv
++ Updated dependencies
 
 ## [1.1.0] - 2018-12-02
 
