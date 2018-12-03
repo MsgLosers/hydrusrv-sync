@@ -332,6 +332,13 @@ module.exports = {
     db.hydrusrv.prepare('ALTER TABLE tags_new RENAME TO tags').run()
     db.hydrusrv.prepare('ALTER TABLE files_new RENAME TO files').run()
     db.hydrusrv.prepare('ALTER TABLE mappings_new RENAME TO mappings').run()
+
+    db.hydrusrv.prepare(
+      `CREATE INDEX idx_mappings_file_tags_id ON mappings(file_tags_id)`
+    ).run()
+    db.hydrusrv.prepare(
+      `CREATE INDEX idx_mappings_tag_id ON mappings(tag_id)`
+    ).run()
   },
   vacuum () {
     db.hydrusrv.prepare('VACUUM').run()

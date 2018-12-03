@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
++ Added indexes on `mappings` fields for increased query performance in
+  hydrusrv
 + Dropped `hydrusrv` prefix from tables to be consistent with the hydrusrv
   application database naming scheme
 
