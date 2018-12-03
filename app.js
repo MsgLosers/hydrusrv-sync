@@ -99,7 +99,7 @@ module.exports = {
       `CREATE TABLE IF NOT EXISTS files${suffix} (
         id INTEGER NOT NULL PRIMARY KEY UNIQUE,
         tags_id INTEGER UNIQUE DEFAULT NULL,
-        hash BLOB_BYTES UNIQUE NOT NULL,
+        hash TEXT UNIQUE NOT NULL,
         mime INTEGER NOT NULL,
         size INTEGER NOT NULL,
         width INTEGER NOT NULL,
@@ -216,7 +216,7 @@ module.exports = {
         SELECT
           ${config.hydrusDbTables.currentFiles}.service_hash_id,
           ${config.hydrusDbTables.repositoryHashIdMapTags}.service_hash_id,
-          ${config.hydrusDbTables.hashes}.hash,
+          LOWER(HEX(${config.hydrusDbTables.hashes}.hash)),
           ${config.hydrusDbTables.filesInfo}.mime,
           ${config.hydrusDbTables.filesInfo}.size,
           ${config.hydrusDbTables.filesInfo}.width,

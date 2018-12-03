@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   hydrusrv
 + Dropped `hydrusrv` prefix from tables to be consistent with the hydrusrv
   application database naming scheme
++ File hashes in hex form are now computed on sync via SQLite's `HEX()`
+  function (in combination with `LOWER()`) for increased performance in
+  hydrusrv
 
 ## [1.1.0] - 2018-12-02
 
