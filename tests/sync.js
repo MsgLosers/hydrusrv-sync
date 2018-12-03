@@ -26,13 +26,13 @@ test.serial('sync: run', t => {
 
   t.deepEqual(
     db.hydrusrv.prepare(
-      `SELECT COUNT(*) FROM hydrusrv_namespaces
+      `SELECT COUNT(*) FROM namespaces
         UNION
-      SELECT COUNT(*) FROM hydrusrv_tags
+      SELECT COUNT(*) FROM tags
         UNION
-      SELECT COUNT(*) FROM hydrusrv_files
+      SELECT COUNT(*) FROM files
         UNION
-      SELECT COUNT(*) FROM hydrusrv_mappings`
+      SELECT COUNT(*) FROM mappings`
     ).pluck().all(),
     [1, 5, 10, 20]
   )

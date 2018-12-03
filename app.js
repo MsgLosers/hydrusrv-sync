@@ -44,18 +44,18 @@ module.exports = {
     profiler.log('replace current tables: {dt}\n')
 
     this.vacuum()
-    profiler.log('vacuuming: {dt}\n')
+    profiler.log('vacuum: {dt}\n')
 
     profiler.log(`total: {t}\n\n`)
 
     console.info(db.hydrusrv.prepare(
-      `SELECT COUNT(*) FROM hydrusrv_namespaces
+      `SELECT COUNT(*) FROM namespaces
         UNION
-      SELECT COUNT(*) FROM hydrusrv_tags
+      SELECT COUNT(*) FROM tags
         UNION
-      SELECT COUNT(*) FROM hydrusrv_files
+      SELECT COUNT(*) FROM files
         UNION
-      SELECT COUNT(*) FROM hydrusrv_mappings`
+      SELECT COUNT(*) FROM mappings`
     ).pluck().all().map(
       (count, i) => ['namespaces: ', 'tag: ', 'files: ', 'mappings: '][i] +
         count
@@ -70,14 +70,14 @@ module.exports = {
     const suffix = initial ? '' : '_new'
 
     db.hydrusrv.prepare(
-      `CREATE TABLE IF NOT EXISTS hydrusrv_namespaces${suffix} (
+      `CREATE TABLE IF NOT EXISTS namespaces${suffix} (
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
         name TEXT NOT NULL UNIQUE
       )`
     ).run()
 
     db.hydrusrv.prepare(
-      `CREATE TABLE IF NOT EXISTS hydrusrv_tags${suffix} (
+      `CREATE TABLE IF NOT EXISTS tags${suffix} (
         id INTEGER NOT NULL PRIMARY KEY UNIQUE,
         name TEXT NOT NULL UNIQUE,
         file_count INTEGER NOT NULL,
@@ -96,7 +96,7 @@ module.exports = {
     }
 
     db.hydrusrv.prepare(
-      `CREATE TABLE IF NOT EXISTS hydrusrv_files${suffix} (
+      `CREATE TABLE IF NOT EXISTS files${suffix} (
         id INTEGER NOT NULL PRIMARY KEY UNIQUE,
         tags_id INTEGER UNIQUE DEFAULT NULL,
         hash BLOB_BYTES UNIQUE NOT NULL,
@@ -110,23 +110,23 @@ module.exports = {
     ).run()
 
     db.hydrusrv.prepare(
-      `CREATE TABLE IF NOT EXISTS hydrusrv_mappings${suffix} (
+      `CREATE TABLE IF NOT EXISTS mappings${suffix} (
         file_tags_id INTEGER NOT NULL,
         tag_id INTEGER NOT NULL,
-        FOREIGN KEY(file_tags_id) REFERENCES hydrusrv_files${suffix}(tags_id)
+        FOREIGN KEY(file_tags_id) REFERENCES files${suffix}(tags_id)
           ON UPDATE CASCADE
           ON DELETE CASCADE,
-        FOREIGN KEY(tag_id) REFERENCES hydrusrv_tags${suffix}(id)
+        FOREIGN KEY(tag_id) REFERENCES tags${suffix}(id)
           ON UPDATE CASCADE
           ON DELETE CASCADE
       )`
     ).run()
   },
   dropZombieTables () {
-    db.hydrusrv.prepare('DROP TABLE IF EXISTS hydrusrv_namespaces_new').run()
-    db.hydrusrv.prepare('DROP TABLE IF EXISTS hydrusrv_mappings_new').run()
-    db.hydrusrv.prepare('DROP TABLE IF EXISTS hydrusrv_tags_new').run()
-    db.hydrusrv.prepare('DROP TABLE IF EXISTS hydrusrv_files_new').run()
+    db.hydrusrv.prepare('DROP TABLE IF EXISTS namespaces_new').run()
+    db.hydrusrv.prepare('DROP TABLE IF EXISTS mappings_new').run()
+    db.hydrusrv.prepare('DROP TABLE IF EXISTS tags_new').run()
+    db.hydrusrv.prepare('DROP TABLE IF EXISTS files_new').run()
   },
   getNamespaces () {
     return db.hydrusrv.prepare(
@@ -162,13 +162,13 @@ module.exports = {
   fillNewNamespacesTable (namespaces) {
     for (const namespace of namespaces) {
       db.hydrusrv.prepare(
-        'INSERT INTO hydrusrv_namespaces_new (name) VALUES (?)'
+        'INSERT INTO namespaces_new (name) VALUES (?)'
       ).run(namespace)
     }
   },
   fillNewTagsTable () {
     db.hydrusrv.prepare(
-      `INSERT INTO hydrusrv_tags_new
+      `INSERT INTO tags_new
         SELECT
           ${config.hydrusDbTables.currentMappings}.service_tag_id,
           ${config.hydrusDbTables.tags}.tag,
@@ -202,7 +202,7 @@ module.exports = {
     }
 
     db.hydrusrv.prepare(
-      `INSERT INTO hydrusrv_files_new (
+      `INSERT INTO files_new (
         id,
         tags_id,
         hash,
@@ -272,7 +272,7 @@ module.exports = {
 
     namespaces.map((namespace, i) => {
       updateStatements[namespaces[i]] = db.hydrusrv.prepare(
-        `UPDATE hydrusrv_files_new
+        `UPDATE files_new
           SET
             namespace_${namespace.replace(' ', '_')} = :tag
           WHERE
@@ -298,7 +298,7 @@ module.exports = {
   },
   fillNewMappingsTable () {
     db.hydrusrv.prepare(
-      `INSERT INTO hydrusrv_mappings_new
+      `INSERT INTO mappings_new
         SELECT
           ${config.hydrusDbTables.currentMappings}.service_hash_id,
           ${config.hydrusDbTables.currentMappings}.service_tag_id
@@ -323,26 +323,15 @@ module.exports = {
     ).run()
   },
   replaceCurrentTables () {
-    db.hydrusrv.prepare('DROP TABLE IF EXISTS hydrusrv_namespaces').run()
-    db.hydrusrv.prepare('DROP TABLE IF EXISTS hydrusrv_mappings').run()
-    db.hydrusrv.prepare('DROP TABLE IF EXISTS hydrusrv_tags').run()
-    db.hydrusrv.prepare('DROP TABLE IF EXISTS hydrusrv_files').run()
+    db.hydrusrv.prepare('DROP TABLE IF EXISTS namespaces').run()
+    db.hydrusrv.prepare('DROP TABLE IF EXISTS mappings').run()
+    db.hydrusrv.prepare('DROP TABLE IF EXISTS tags').run()
+    db.hydrusrv.prepare('DROP TABLE IF EXISTS files').run()
 
-    db.hydrusrv.prepare(
-      'ALTER TABLE hydrusrv_namespaces_new RENAME TO hydrusrv_namespaces'
-    ).run()
-
-    db.hydrusrv.prepare(
-      'ALTER TABLE hydrusrv_tags_new RENAME TO hydrusrv_tags'
-    ).run()
-
-    db.hydrusrv.prepare(
-      'ALTER TABLE hydrusrv_files_new RENAME TO hydrusrv_files'
-    ).run()
-
-    db.hydrusrv.prepare(
-      'ALTER TABLE hydrusrv_mappings_new RENAME TO hydrusrv_mappings'
-    ).run()
+    db.hydrusrv.prepare('ALTER TABLE namespaces_new RENAME TO namespaces').run()
+    db.hydrusrv.prepare('ALTER TABLE tags_new RENAME TO tags').run()
+    db.hydrusrv.prepare('ALTER TABLE files_new RENAME TO files').run()
+    db.hydrusrv.prepare('ALTER TABLE mappings_new RENAME TO mappings').run()
   },
   vacuum () {
     db.hydrusrv.prepare('VACUUM').run()
