@@ -134,25 +134,25 @@ module.exports = {
     return db.hydrusrv.prepare(
       `SELECT name FROM (
         SELECT DISTINCT SUBSTR(
-          ${config.hydrusDbTables.tags}.tag,
+          ${config.hydrusTableTags}.tag,
           0,
-          INSTR(${config.hydrusDbTables.tags}.tag, ':')
+          INSTR(${config.hydrusTableTags}.tag, ':')
         ) AS name
         FROM
-          ${config.hydrusDbTables.currentMappings}
+          ${config.hydrusTableCurrentMappings}
         NATURAL JOIN
-          ${config.hydrusDbTables.repositoryTagIdMap}
+          ${config.hydrusTableRepositoryTagIdMap}
         NATURAL JOIN
-          ${config.hydrusDbTables.tags}
+          ${config.hydrusTableTags}
         NATURAL JOIN
-          ${config.hydrusDbTables.repositoryHashIdMapTags}
+          ${config.hydrusTableRepositoryHashIdMapTags}
         NATURAL JOIN
-          ${config.hydrusDbTables.filesInfo}
+          ${config.hydrusTableFilesInfo}
         WHERE
-          ${config.hydrusDbTables.tags}.tag LIKE '%_:_%'
+          ${config.hydrusTableTags}.tag LIKE '%_:_%'
         AND
-          ${config.hydrusDbTables.filesInfo}.mime IN (
-            ${config.hydrus.supportedMimeTypes}
+          ${config.hydrusTableFilesInfo}.mime IN (
+            ${config.supportedMimeTypes}
           )
       )
       WHERE
@@ -172,26 +172,26 @@ module.exports = {
     db.hydrusrv.prepare(
       `INSERT INTO tags_new
         SELECT
-          ${config.hydrusDbTables.currentMappings}.service_tag_id,
-          ${config.hydrusDbTables.tags}.tag,
+          ${config.hydrusTableCurrentMappings}.service_tag_id,
+          ${config.hydrusTableTags}.tag,
           COUNT(*),
           SUBSTR(''||RANDOM(), -4)
         FROM
-          ${config.hydrusDbTables.currentMappings}
+          ${config.hydrusTableCurrentMappings}
         NATURAL JOIN
-          ${config.hydrusDbTables.repositoryTagIdMap}
+          ${config.hydrusTableRepositoryTagIdMap}
         NATURAL JOIN
-          ${config.hydrusDbTables.tags}
+          ${config.hydrusTableTags}
         NATURAL JOIN
-          ${config.hydrusDbTables.repositoryHashIdMapTags}
+          ${config.hydrusTableRepositoryHashIdMapTags}
         NATURAL JOIN
-          ${config.hydrusDbTables.filesInfo}
+          ${config.hydrusTableFilesInfo}
         WHERE
-          ${config.hydrusDbTables.filesInfo}.mime IN (
-            ${config.hydrus.supportedMimeTypes}
+          ${config.hydrusTableFilesInfo}.mime IN (
+            ${config.supportedMimeTypes}
           )
         GROUP BY
-          ${config.hydrusDbTables.tags}.tag`
+          ${config.hydrusTableTags}.tag`
     ).run()
   },
   fillNewFilesTable (namespaces) {
@@ -216,30 +216,30 @@ module.exports = {
         ${namespaceColumns.length ? ',' + namespaceColumns.join(',') : ''}
       )
         SELECT
-          ${config.hydrusDbTables.currentFiles}.service_hash_id,
-          ${config.hydrusDbTables.repositoryHashIdMapTags}.service_hash_id,
-          LOWER(HEX(${config.hydrusDbTables.hashes}.hash)),
-          ${config.hydrusDbTables.filesInfo}.mime,
-          ${config.hydrusDbTables.filesInfo}.size,
-          ${config.hydrusDbTables.filesInfo}.width,
-          ${config.hydrusDbTables.filesInfo}.height,
+          ${config.hydrusTableCurrentFiles}.service_hash_id,
+          ${config.hydrusTableRepositoryHashIdMapTags}.service_hash_id,
+          LOWER(HEX(${config.hydrusTableHashes}.hash)),
+          ${config.hydrusTableFilesInfo}.mime,
+          ${config.hydrusTableFilesInfo}.size,
+          ${config.hydrusTableFilesInfo}.width,
+          ${config.hydrusTableFilesInfo}.height,
           SUBSTR(''||random(), -4)
           ${namespaceColumns.length ? ', null AS ' + namespaceColumns.join(', null AS ') : ''}
         FROM
-          ${config.hydrusDbTables.hashes}
+          ${config.hydrusTableHashes}
         NATURAL JOIN
-          ${config.hydrusDbTables.filesInfo}
+          ${config.hydrusTableFilesInfo}
         NATURAL JOIN
-          ${config.hydrusDbTables.repositoryHashIdMapFiles}
+          ${config.hydrusTableRepositoryHashIdMapFiles}
         LEFT JOIN
-          ${config.hydrusDbTables.repositoryHashIdMapTags}
-          ON ${config.hydrusDbTables.repositoryHashIdMapTags}.master_hash_id =
-            ${config.hydrusDbTables.hashes}.master_hash_id
+          ${config.hydrusTableRepositoryHashIdMapTags}
+          ON ${config.hydrusTableRepositoryHashIdMapTags}.master_hash_id =
+            ${config.hydrusTableHashes}.master_hash_id
         NATURAL JOIN
-          ${config.hydrusDbTables.currentFiles}
+          ${config.hydrusTableCurrentFiles}
         WHERE
-          ${config.hydrusDbTables.filesInfo}.mime IN (
-            ${config.hydrus.supportedMimeTypes}
+          ${config.hydrusTableFilesInfo}.mime IN (
+            ${config.supportedMimeTypes}
           )`
     ).run()
 
@@ -248,7 +248,7 @@ module.exports = {
         SELECT
           master_tag_id, tag
         FROM
-          ${config.hydrusDbTables.tags}
+          ${config.hydrusTableTags}
         WHERE
           tag LIKE '%_:_%'`
     ).run()
@@ -256,15 +256,15 @@ module.exports = {
     const selectStatement = db.hydrusrv.prepare(
       `SELECT
         REPLACE(temp_namespaces_reduced.tag, :namespace, '') AS tag,
-        ${config.hydrusDbTables.repositoryHashIdMapTags}.service_hash_id AS tags_id
+        ${config.hydrusTableRepositoryHashIdMapTags}.service_hash_id AS tags_id
       FROM
-        ${config.hydrusDbTables.currentMappings}
+        ${config.hydrusTableCurrentMappings}
       NATURAL JOIN
-        ${config.hydrusDbTables.repositoryTagIdMap}
+        ${config.hydrusTableRepositoryTagIdMap}
       NATURAL JOIN
         temp_namespaces_reduced
       NATURAL JOIN
-        ${config.hydrusDbTables.repositoryHashIdMapTags}
+        ${config.hydrusTableRepositoryHashIdMapTags}
       WHERE
         temp_namespaces_reduced.tag LIKE :namespace || '_%'
       GROUP BY tags_id`
@@ -302,25 +302,25 @@ module.exports = {
     db.hydrusrv.prepare(
       `INSERT INTO mappings_new
         SELECT
-          ${config.hydrusDbTables.currentMappings}.service_hash_id,
-          ${config.hydrusDbTables.currentMappings}.service_tag_id
+          ${config.hydrusTableCurrentMappings}.service_hash_id,
+          ${config.hydrusTableCurrentMappings}.service_tag_id
         FROM
-          ${config.hydrusDbTables.currentMappings}
+          ${config.hydrusTableCurrentMappings}
         NATURAL JOIN
-          ${config.hydrusDbTables.repositoryHashIdMapTags}
+          ${config.hydrusTableRepositoryHashIdMapTags}
         NATURAL JOIN
-          ${config.hydrusDbTables.filesInfo}
+          ${config.hydrusTableFilesInfo}
         INNER JOIN
-          ${config.hydrusDbTables.repositoryHashIdMapFiles}
-          ON ${config.hydrusDbTables.repositoryHashIdMapFiles}.master_hash_id =
-            ${config.hydrusDbTables.filesInfo}.master_hash_id
+          ${config.hydrusTableRepositoryHashIdMapFiles}
+          ON ${config.hydrusTableRepositoryHashIdMapFiles}.master_hash_id =
+            ${config.hydrusTableFilesInfo}.master_hash_id
         INNER JOIN
-          ${config.hydrusDbTables.currentFiles}
-          ON ${config.hydrusDbTables.currentFiles}.service_hash_id =
-            ${config.hydrusDbTables.repositoryHashIdMapFiles}.service_hash_id
+          ${config.hydrusTableCurrentFiles}
+          ON ${config.hydrusTableCurrentFiles}.service_hash_id =
+            ${config.hydrusTableRepositoryHashIdMapFiles}.service_hash_id
         WHERE
-          ${config.hydrusDbTables.filesInfo}.mime IN (
-            ${config.hydrus.supportedMimeTypes}
+          ${config.hydrusTableFilesInfo}.mime IN (
+            ${config.supportedMimeTypes}
           )`
     ).run()
   },
