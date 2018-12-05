@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.3.0] - 2018-12-05
+
 ### Changed
 
 + Moved content database checkpointing here from hydrusrv
@@ -40,6 +42,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Initial release
 
-[Unreleased]: https://github.com/mserajnik/hydrusrv-sync/compare/1.2.0...develop
+[Unreleased]: https://github.com/mserajnik/hydrusrv-sync/compare/1.3.0...develop
+[1.3.0]: https://github.com/mserajnik/hydrusrv-sync/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/mserajnik/hydrusrv-sync/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/mserajnik/hydrusrv-sync/compare/1.0.0...1.1.0
