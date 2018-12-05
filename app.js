@@ -48,18 +48,19 @@ module.exports = {
 
     profiler.log(`total: {t}\n\n`)
 
-    console.info(db.hydrusrv.prepare(
-      `SELECT COUNT(*) FROM namespaces
-        UNION
-      SELECT COUNT(*) FROM tags
-        UNION
-      SELECT COUNT(*) FROM files
-        UNION
-      SELECT COUNT(*) FROM mappings`
-    ).pluck().all().map(
-      (count, i) => ['namespaces: ', 'tag: ', 'files: ', 'mappings: '][i] +
-        count
-    ).join(', '))
+    console.info(
+      db.hydrusrv.prepare(
+        `SELECT COUNT(*) FROM namespaces
+          UNION
+        SELECT COUNT(*) FROM tags
+          UNION
+        SELECT COUNT(*) FROM files
+          UNION
+        SELECT COUNT(*) FROM mappings`
+      ).pluck().all().reduce(
+        (a, x, i) => (a[['namespaces', 'tags', 'files', 'mappings'][i]] = x) && a, []
+      )
+    )
   },
   abortSync () {
     process.nextTick(() => {
@@ -341,6 +342,12 @@ module.exports = {
     ).run()
   },
   vacuum () {
-    db.hydrusrv.prepare('VACUUM').run()
+    try{
+      db.hydrusrv.prepare(`VACUUM`).run()
+      db.hydrusrv.pragma(`wal_checkpoint(TRUNCATE)`)
+    }
+    catch(e){
+      console.error(e.stack)
+    }
   }
 }
