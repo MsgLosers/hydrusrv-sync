@@ -4,7 +4,7 @@ const config = require('../config')
 
 module.exports = {
   connect () {
-    this.hydrusrv = new Database(config.hydrusrvDb.contentDbPath, {
+    this.hydrusrv = new Database(config.hydrusrvContentDbPath, {
       fileMustExist: true
     })
 
@@ -30,13 +30,13 @@ module.exports = {
   },
   attachHydrusDatabases () {
     this.hydrusrv.prepare(
-      `ATTACH '${config.hydrusDb.serverDbPath}' AS hydrus_server_db`
+      `ATTACH '${config.hydrusServerDbPath}' AS hydrus_server_db`
     ).run()
     this.hydrusrv.prepare(
-      `ATTACH '${config.hydrusDb.masterDbPath}' AS hydrus_master_db`
+      `ATTACH '${config.hydrusMasterDbPath}' AS hydrus_master_db`
     ).run()
     this.hydrusrv.prepare(
-      `ATTACH '${config.hydrusDb.mappingsDbPath}' AS hydrus_mappings_db`
+      `ATTACH '${config.hydrusMappingsDbPath}' AS hydrus_mappings_db`
     ).run()
   },
   detachHydrusDatabases () {
