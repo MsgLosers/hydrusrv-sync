@@ -43,8 +43,8 @@ module.exports = {
     this.replaceCurrentTables()
     profiler.log('replace current tables: {dt}\n')
 
-    this.vacuum()
-    profiler.log('vacuum: {dt}\n')
+    this.cleanUp()
+    profiler.log('clean up: {dt}\n')
 
     profiler.log(`total: {t}\n\n`)
 
@@ -58,7 +58,8 @@ module.exports = {
           UNION
         SELECT COUNT(*) FROM mappings`
       ).pluck().all().reduce(
-        (a, x, i) => (a[['namespaces', 'tags', 'files', 'mappings'][i]] = x) && a, []
+        (a, x, i) => (a[['namespaces', 'tags', 'files', 'mappings'][i]] = x) &&
+        a, []
       )
     )
   },
@@ -341,13 +342,8 @@ module.exports = {
       `CREATE INDEX idx_mappings_tag_id ON mappings(tag_id)`
     ).run()
   },
-  vacuum () {
-    try{
-      db.hydrusrv.prepare(`VACUUM`).run()
-      db.hydrusrv.pragma(`wal_checkpoint(TRUNCATE)`)
-    }
-    catch(e){
-      console.error(e.stack)
-    }
+  cleanUp () {
+    db.hydrusrv.prepare('VACUUM').run()
+    db.hydrusrv.pragma('wal_checkpoint(TRUNCATE)')
   }
 }
