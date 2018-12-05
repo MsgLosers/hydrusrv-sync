@@ -257,7 +257,7 @@ You are welcome to help out!
 [docker-hub]: https://hub.docker.com/r/mserajnik/hydrusrv-sync/
 [hydrusrv-docker]: https://github.com/mserajnik/hydrusrv-docker
 [docker-compose]: https://docs.docker.com/compose/
-[supported-mime-types]: https://github.com/mserajnik/hydrusrv-sync/blob/master/src/config/index.js#L2-L14
+[supported-mime-types]: https://github.com/mserajnik/hydrusrv-sync/blob/master/src/config/index.js#L5-L17
 
 [maintainer]: https://github.com/mserajnik
 [issues]: https://github.com/mserajnik/hydrusrv-sync/issues/new
