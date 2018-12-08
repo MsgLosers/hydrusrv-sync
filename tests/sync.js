@@ -42,4 +42,6 @@ test.after(t => {
   db.close()
 
   fse.removeSync(path.resolve(__dirname, `storage/content.db`))
+  fse.removeSync(path.resolve(__dirname, `storage/content.db-shm`))
+  fse.removeSync(path.resolve(__dirname, `storage/content.wal`))
 })
