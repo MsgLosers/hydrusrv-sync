@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
++ Added handling for cached file and tag count tables
+
+### Changed
+
++ Updated dependencies
+
 ## [1.4.1] - 2018-12-05
 
 ### Fixed
