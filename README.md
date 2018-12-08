@@ -119,7 +119,7 @@ become an issue unless we are talking about tens of millions of files/tags.
 Here is an example of a sync with a fairly large database:
 
 ```
-11/25/2018, 10:41:19 PM: running sync...
+12/09/2018, 12:50:17 AM: running sync...
 
 create initial tables (if necessary): 0.003s
 drop zombie tables: 0.000s
@@ -132,10 +132,10 @@ fill new files table: 17.492s
 fill new mappings table: 32.228s
 detach hydrus databases: 0.015s
 replace current tables: 0.006s
-vacuuming: 2.360s
+clean up: 2.360s
 total: 76.059s
 
-namespaces: 15, tag: 73240, files: 216822, mappings: 7655592
+[ namespaces: 15, tag: 73240, files: 216822, mappings: 7655592 ]
 ```
 
 hydrusrv-sync always copies over all the data without comparing changes. This
