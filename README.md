@@ -12,6 +12,7 @@ or automated (e.g., via cron job), depending on your needs.
 + [Install](#install)
   + [Dependencies](#dependencies)
   + [Updating](#updating)
+    + [Upgrading from 1.x to 2.x](#upgrading-from-1x-to-2x)
 + [Usage](#usage)
   + [Configuration](#configuration)
   + [Run](#run)
@@ -69,6 +70,12 @@ are therefore always safe to simply install via the routine mentioned before.
 
 When necessary, this section will be expanded with upgrade guides to new major
 versions.
+
+#### Upgrading from 1.x to 2.x
+
+Upgrading from `1.x` to `2.x` can be done via `git pull && yarn`. The major
+version bump was made because due to the incompatibility of `1.x` with hydrusrv
+`5.x`. So if you are using that, you need to upgrade hydrusrv-sync to `2.x`.
 
 ## Usage
 
