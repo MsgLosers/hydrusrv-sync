@@ -74,9 +74,11 @@ versions.
 
 #### Upgrading from 1.x to 2.x
 
-Upgrading from `1.x` to `2.x` can be done via `git pull && yarn`. The major
-version bump was made because due to the incompatibility of `1.x` with hydrusrv
-`5.x`. So if you are using that, you need to upgrade hydrusrv-sync to `2.x`.
+Upgrading from `1.x` to `2.x` can be done via `git pull && yarn`.
+
+The major version bump was made due to the incompatibility of `1.x` with
+hydrusrv `5.x`. So if you are using that, you need to upgrade hydrusrv-sync to
+`2.x`.
 
 ## Usage
 
