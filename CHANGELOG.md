@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.0.0] - 2018-12-09
+
 ### Added
 
 + Added handling for cached file and tag count tables
@@ -63,7 +65,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Initial release
 
-[Unreleased]: https://github.com/mserajnik/hydrusrv-sync/compare/1.4.1...develop
+[Unreleased]: https://github.com/mserajnik/hydrusrv-sync/compare/2.0.0...develop
+[2.0.0]: https://github.com/mserajnik/hydrusrv-sync/compare/1.4.1...2.0.0
 [1.4.1]: https://github.com/mserajnik/hydrusrv-sync/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/mserajnik/hydrusrv-sync/compare/1.3.0...1.4.0
 [1.3.0]: https://github.com/mserajnik/hydrusrv-sync/compare/1.2.0...1.3.0
