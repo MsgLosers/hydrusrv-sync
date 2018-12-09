@@ -123,12 +123,28 @@ module.exports = {
           ON DELETE CASCADE
       )`
     ).run()
+
+    db.hydrusrv.prepare(
+      `CREATE TABLE IF NOT EXISTS tag_counts${suffix} (
+        hash TEXT UNIQUE NOT NULL PRIMARY KEY,
+        count INTEGER NOT NULL
+      )`
+    ).run()
+
+    db.hydrusrv.prepare(
+      `CREATE TABLE IF NOT EXISTS file_counts${suffix} (
+        hash TEXT UNIQUE NOT NULL PRIMARY KEY,
+        count INTEGER NOT NULL
+      )`
+    ).run()
   },
   dropZombieTables () {
     db.hydrusrv.prepare('DROP TABLE IF EXISTS namespaces_new').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS mappings_new').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS tags_new').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS files_new').run()
+    db.hydrusrv.prepare('DROP TABLE IF EXISTS tag_counts_new').run()
+    db.hydrusrv.prepare('DROP TABLE IF EXISTS file_counts_new').run()
   },
   getNamespaces () {
     return db.hydrusrv.prepare(
@@ -329,11 +345,15 @@ module.exports = {
     db.hydrusrv.prepare('DROP TABLE IF EXISTS mappings').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS tags').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS files').run()
+    db.hydrusrv.prepare('DROP TABLE IF EXISTS tag_counts').run()
+    db.hydrusrv.prepare('DROP TABLE IF EXISTS file_counts').run()
 
     db.hydrusrv.prepare('ALTER TABLE namespaces_new RENAME TO namespaces').run()
     db.hydrusrv.prepare('ALTER TABLE tags_new RENAME TO tags').run()
     db.hydrusrv.prepare('ALTER TABLE files_new RENAME TO files').run()
     db.hydrusrv.prepare('ALTER TABLE mappings_new RENAME TO mappings').run()
+    db.hydrusrv.prepare('ALTER TABLE tag_counts_new RENAME TO tag_counts').run()
+    db.hydrusrv.prepare('ALTER TABLE file_counts_new RENAME TO file_counts').run()
 
     db.hydrusrv.prepare(
       `CREATE INDEX idx_mappings_file_tags_id ON mappings(file_tags_id)`
