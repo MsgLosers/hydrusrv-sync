@@ -41,6 +41,7 @@ directly if you cannnot resolve your issues.
 
 ### Dependencies
 
++ [hydrusrv][hydrusrv] (`5.x` for hydrusrv-sync `2.x`)
 + [hydrus server][hydrus-server] (installing and running the server is quite
   difficult and not recommended for people who have no prior experience with
   hydrus; see [here][hydrus-server-installation] for installation instructions)
