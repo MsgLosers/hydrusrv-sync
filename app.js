@@ -37,6 +37,9 @@ module.exports = {
     this.fillNewMappingsTable()
     profiler.log('fill new mappings table: {dt}\n')
 
+    this.updateTagCountsOnNewFilesTables()
+    profiler.log('update tag counts on new files table: {dt}\n')
+
     db.detachHydrusDatabases()
     profiler.log('detach hydrus databases: {dt}\n')
 
@@ -106,6 +109,7 @@ module.exports = {
         size INTEGER NOT NULL,
         width INTEGER NOT NULL,
         height INTEGER NOT NULL,
+        tag_count INTEGER NOT NULL DEFAULT 0,
         random TEXT NOT NULL
         ${namespaceColumns.length ? ',' + namespaceColumns.join(',') : ''}
       )`
@@ -283,18 +287,20 @@ module.exports = {
         ${config.hydrusTableRepositoryHashIdMapTags}
       WHERE
         temp_namespaces_reduced.tag LIKE :namespace || '_%'
-      GROUP BY tags_id`
+      GROUP BY
+        tags_id`
     )
 
     const updateStatements = []
 
     namespaces.map((namespace, i) => {
       updateStatements[namespaces[i]] = db.hydrusrv.prepare(
-        `UPDATE files_new
-          SET
-            namespace_${namespace.replace(' ', '_')} = :tag
-          WHERE
-            tags_id = :tags_id`
+        `UPDATE
+          files_new
+        SET
+          namespace_${namespace.replace(' ', '_')} = :tag
+        WHERE
+          tags_id = :tags_id`
       )
     })
 
@@ -340,6 +346,32 @@ module.exports = {
           )`
     ).run()
   },
+  updateTagCountsOnNewFilesTables () {
+    db.hydrusrv.prepare(
+      `CREATE INDEX
+        temp_idx_mappings_file_tags_id
+      ON
+        mappings_new(file_tags_id)`
+    ).run()
+
+    db.hydrusrv.prepare(
+      `UPDATE
+        files_new
+      SET
+        tag_count = (
+          SELECT
+            COUNT(*)
+          FROM
+            mappings_new
+          WHERE
+            mappings_new.file_tags_id = files_new.tags_id
+        )`
+    ).run()
+
+    db.hydrusrv.prepare(
+      'DROP INDEX temp_idx_mappings_file_tags_id'
+    ).run()
+  },
   replaceCurrentTables () {
     db.hydrusrv.prepare('DROP TABLE IF EXISTS namespaces').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS mappings').run()
@@ -356,10 +388,10 @@ module.exports = {
     db.hydrusrv.prepare('ALTER TABLE file_counts_new RENAME TO file_counts').run()
 
     db.hydrusrv.prepare(
-      `CREATE INDEX idx_mappings_file_tags_id ON mappings(file_tags_id)`
+      'CREATE INDEX idx_mappings_file_tags_id ON mappings(file_tags_id)'
     ).run()
     db.hydrusrv.prepare(
-      `CREATE INDEX idx_mappings_tag_id ON mappings(tag_id)`
+      'CREATE INDEX idx_mappings_tag_id ON mappings(tag_id)'
     ).run()
   },
   cleanUp () {
