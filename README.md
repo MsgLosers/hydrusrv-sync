@@ -122,23 +122,24 @@ become an issue unless we are talking about tens of millions of files/tags.
 Here is an example of a sync with a fairly large database:
 
 ```
-12/09/2018, 12:50:17 AM: running sync...
+12/20/2018, 5:18:25 PM: running sync...
 
 create initial tables (if necessary): 0.003s
 drop zombie tables: 0.000s
-attach hydrus databases: 0.004s
-get namespaces: 5.758s
-create new tables: 0.001s
+attach hydrus databases: 0.002s
+get namespaces: 5.779s
+create new tables: 0.002s
 fill new namespaces table: 0.001s
-fill new tags table: 18.181s
-fill new files table: 17.492s
-fill new mappings table: 32.228s
-detach hydrus databases: 0.015s
-replace current tables: 0.006s
-clean up: 2.360s
-total: 76.059s
+fill new tags table: 18.410s
+fill new files table: 17.038s
+fill new mappings table: 32.535s
+update tag counts on new files table: 4.646s
+detach hydrus databases: 0.016s
+replace current tables: 6.470s
+clean up: 4.896s
+total: 89.809s
 
-[ namespaces: 15, tag: 73240, files: 216822, mappings: 7655592 ]
+namespaces: 15, tag: 73240, files: 216822, mappings: 7655592
 ```
 
 hydrusrv-sync always copies over all the data without comparing changes. This
