@@ -51,20 +51,7 @@ module.exports = {
 
     profiler.log(`total: {t}\n\n`)
 
-    console.info(
-      db.hydrusrv.prepare(
-        `SELECT COUNT(*) FROM namespaces
-          UNION
-        SELECT COUNT(*) FROM tags
-          UNION
-        SELECT COUNT(*) FROM files
-          UNION
-        SELECT COUNT(*) FROM mappings`
-      ).pluck().all().reduce(
-        (a, x, i) => (a[['namespaces', 'tags', 'files', 'mappings'][i]] = x) &&
-        a, []
-      )
-    )
+    console.info(this.getTotals())
 
     db.close()
   },
@@ -395,6 +382,20 @@ module.exports = {
     db.hydrusrv.prepare(
       'CREATE INDEX idx_mappings_tag_id ON mappings(tag_id)'
     ).run()
+  },
+  getTotals () {
+    return db.hydrusrv.prepare(
+      `SELECT COUNT(*) FROM namespaces
+        UNION
+      SELECT COUNT(*) FROM tags
+        UNION
+      SELECT COUNT(*) FROM files
+        UNION
+      SELECT COUNT(*) FROM mappings`
+    ).pluck().all().map(
+      (count, i) => ['namespaces: ', 'tag: ', 'files: ', 'mappings: '][i] +
+        count
+    ).join(', ')
   },
   cleanUp () {
     try {
