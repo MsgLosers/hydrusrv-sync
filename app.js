@@ -65,6 +65,8 @@ module.exports = {
         a, []
       )
     )
+
+    db.close()
   },
   abortSync () {
     process.nextTick(() => {
@@ -395,7 +397,14 @@ module.exports = {
     ).run()
   },
   cleanUp () {
-    db.hydrusrv.prepare('VACUUM').run()
-    db.hydrusrv.pragma('wal_checkpoint(TRUNCATE)')
+    try {
+      db.hydrusrv.prepare('VACUUM').run()
+      db.hydrusrv.pragma('wal_checkpoint(TRUNCATE)')
+    } catch (err) {
+      console.info(
+        'could not clean up after succesful sync, will try again on the next' +
+          'run.'
+      )
+    }
   }
 }

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Added `tag_count` field to `files` table
 
+### Fixed
+
++ Fixed wrong exit code when erroring on cleanup
+
 ## [2.0.0] - 2018-12-09
 
 ### Added
