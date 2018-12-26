@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 + Added `tag_count` field to `files` table
++ Added `mime_types` table
 
 ### Changed
 

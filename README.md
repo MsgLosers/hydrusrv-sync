@@ -133,11 +133,12 @@ fill new namespaces table: 0.001s
 fill new tags table: 18.410s
 fill new files table: 17.038s
 fill new mappings table: 32.535s
+fill new mime types table: 0.046s
 update tag counts on new files table: 4.646s
 detach hydrus databases: 0.016s
 replace current tables: 6.470s
 clean up: 4.896s
-total: 89.809s
+total: 89.855s
 
 namespaces: 15, tag: 73240, files: 216822, mappings: 7655592
 ```

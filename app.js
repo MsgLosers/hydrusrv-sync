@@ -37,6 +37,9 @@ module.exports = {
     this.fillNewMappingsTable()
     profiler.log('fill new mappings table: {dt}\n')
 
+    this.fillNewMimeTypesTable()
+    profiler.log('fill new mime types table: {dt}\n')
+
     this.updateTagCountsOnNewFilesTables()
     profiler.log('update tag counts on new files table: {dt}\n')
 
@@ -118,6 +121,12 @@ module.exports = {
     ).run()
 
     db.hydrusrv.prepare(
+      `CREATE TABLE IF NOT EXISTS mime_types${suffix} (
+        id INTEGER UNIQUE NOT NULL PRIMARY KEY
+      )`
+    ).run()
+
+    db.hydrusrv.prepare(
       `CREATE TABLE IF NOT EXISTS tag_counts${suffix} (
         hash TEXT UNIQUE NOT NULL PRIMARY KEY,
         count INTEGER NOT NULL
@@ -136,6 +145,7 @@ module.exports = {
     db.hydrusrv.prepare('DROP TABLE IF EXISTS mappings_new').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS tags_new').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS files_new').run()
+    db.hydrusrv.prepare('DROP TABLE IF EXISTS mime_types_new').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS tag_counts_new').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS file_counts_new').run()
   },
@@ -335,6 +345,15 @@ module.exports = {
           )`
     ).run()
   },
+  fillNewMimeTypesTable () {
+    db.hydrusrv.prepare(
+      `INSERT INTO mime_types_new
+        SELECT DISTINCT
+          mime
+        FROM
+          files_new`
+    ).run()
+  },
   updateTagCountsOnNewFilesTables () {
     db.hydrusrv.prepare(
       `CREATE INDEX
@@ -357,15 +376,14 @@ module.exports = {
         )`
     ).run()
 
-    db.hydrusrv.prepare(
-      'DROP INDEX temp_idx_mappings_file_tags_id'
-    ).run()
+    db.hydrusrv.prepare('DROP INDEX temp_idx_mappings_file_tags_id').run()
   },
   replaceCurrentTables () {
     db.hydrusrv.prepare('DROP TABLE IF EXISTS namespaces').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS mappings').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS tags').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS files').run()
+    db.hydrusrv.prepare('DROP TABLE IF EXISTS mime_types').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS tag_counts').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS file_counts').run()
 
@@ -373,6 +391,7 @@ module.exports = {
     db.hydrusrv.prepare('ALTER TABLE tags_new RENAME TO tags').run()
     db.hydrusrv.prepare('ALTER TABLE files_new RENAME TO files').run()
     db.hydrusrv.prepare('ALTER TABLE mappings_new RENAME TO mappings').run()
+    db.hydrusrv.prepare('ALTER TABLE mime_types_new RENAME TO mime_types').run()
     db.hydrusrv.prepare('ALTER TABLE tag_counts_new RENAME TO tag_counts').run()
     db.hydrusrv.prepare('ALTER TABLE file_counts_new RENAME TO file_counts').run()
 
