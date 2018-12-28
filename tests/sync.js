@@ -24,6 +24,8 @@ test.before(t => {
 test.serial('sync: run', t => {
   app.runSync()
 
+  db.connect()
+
   t.deepEqual(
     db.hydrusrv.prepare(
       `SELECT COUNT(*) FROM namespaces
@@ -38,10 +40,10 @@ test.serial('sync: run', t => {
   )
 })
 
-test.after(t => {
+test.after.always(t => {
   db.close()
 
   fse.removeSync(path.resolve(__dirname, `storage/content.db`))
   fse.removeSync(path.resolve(__dirname, `storage/content.db-shm`))
-  fse.removeSync(path.resolve(__dirname, `storage/content.wal`))
+  fse.removeSync(path.resolve(__dirname, `storage/content.db-wal`))
 })

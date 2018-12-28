@@ -37,6 +37,12 @@ module.exports = {
     this.fillNewMappingsTable()
     profiler.log('fill new mappings table: {dt}\n')
 
+    this.fillNewMimeTypesTable()
+    profiler.log('fill new mime types table: {dt}\n')
+
+    this.updateTagCountsOnNewFilesTables()
+    profiler.log('update tag counts on new files table: {dt}\n')
+
     db.detachHydrusDatabases()
     profiler.log('detach hydrus databases: {dt}\n')
 
@@ -48,20 +54,9 @@ module.exports = {
 
     profiler.log(`total: {t}\n\n`)
 
-    console.info(
-      db.hydrusrv.prepare(
-        `SELECT COUNT(*) FROM namespaces
-          UNION
-        SELECT COUNT(*) FROM tags
-          UNION
-        SELECT COUNT(*) FROM files
-          UNION
-        SELECT COUNT(*) FROM mappings`
-      ).pluck().all().reduce(
-        (a, x, i) => (a[['namespaces', 'tags', 'files', 'mappings'][i]] = x) &&
-        a, []
-      )
-    )
+    console.info(this.getTotals())
+
+    db.close()
   },
   abortSync () {
     process.nextTick(() => {
@@ -106,6 +101,7 @@ module.exports = {
         size INTEGER NOT NULL,
         width INTEGER NOT NULL,
         height INTEGER NOT NULL,
+        tag_count INTEGER NOT NULL DEFAULT 0,
         random TEXT NOT NULL
         ${namespaceColumns.length ? ',' + namespaceColumns.join(',') : ''}
       )`
@@ -121,6 +117,12 @@ module.exports = {
         FOREIGN KEY(tag_id) REFERENCES tags${suffix}(id)
           ON UPDATE CASCADE
           ON DELETE CASCADE
+      )`
+    ).run()
+
+    db.hydrusrv.prepare(
+      `CREATE TABLE IF NOT EXISTS mime_types${suffix} (
+        id INTEGER UNIQUE NOT NULL PRIMARY KEY
       )`
     ).run()
 
@@ -143,6 +145,7 @@ module.exports = {
     db.hydrusrv.prepare('DROP TABLE IF EXISTS mappings_new').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS tags_new').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS files_new').run()
+    db.hydrusrv.prepare('DROP TABLE IF EXISTS mime_types_new').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS tag_counts_new').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS file_counts_new').run()
   },
@@ -283,18 +286,20 @@ module.exports = {
         ${config.hydrusTableRepositoryHashIdMapTags}
       WHERE
         temp_namespaces_reduced.tag LIKE :namespace || '_%'
-      GROUP BY tags_id`
+      GROUP BY
+        tags_id`
     )
 
     const updateStatements = []
 
     namespaces.map((namespace, i) => {
       updateStatements[namespaces[i]] = db.hydrusrv.prepare(
-        `UPDATE files_new
-          SET
-            namespace_${namespace.replace(' ', '_')} = :tag
-          WHERE
-            tags_id = :tags_id`
+        `UPDATE
+          files_new
+        SET
+          namespace_${namespace.replace(' ', '_')} = :tag
+        WHERE
+          tags_id = :tags_id`
       )
     })
 
@@ -340,11 +345,45 @@ module.exports = {
           )`
     ).run()
   },
+  fillNewMimeTypesTable () {
+    db.hydrusrv.prepare(
+      `INSERT INTO mime_types_new
+        SELECT DISTINCT
+          mime
+        FROM
+          files_new`
+    ).run()
+  },
+  updateTagCountsOnNewFilesTables () {
+    db.hydrusrv.prepare(
+      `CREATE INDEX
+        temp_idx_mappings_file_tags_id
+      ON
+        mappings_new(file_tags_id)`
+    ).run()
+
+    db.hydrusrv.prepare(
+      `UPDATE
+        files_new
+      SET
+        tag_count = (
+          SELECT
+            COUNT(*)
+          FROM
+            mappings_new
+          WHERE
+            mappings_new.file_tags_id = files_new.tags_id
+        )`
+    ).run()
+
+    db.hydrusrv.prepare('DROP INDEX temp_idx_mappings_file_tags_id').run()
+  },
   replaceCurrentTables () {
     db.hydrusrv.prepare('DROP TABLE IF EXISTS namespaces').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS mappings').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS tags').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS files').run()
+    db.hydrusrv.prepare('DROP TABLE IF EXISTS mime_types').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS tag_counts').run()
     db.hydrusrv.prepare('DROP TABLE IF EXISTS file_counts').run()
 
@@ -352,18 +391,40 @@ module.exports = {
     db.hydrusrv.prepare('ALTER TABLE tags_new RENAME TO tags').run()
     db.hydrusrv.prepare('ALTER TABLE files_new RENAME TO files').run()
     db.hydrusrv.prepare('ALTER TABLE mappings_new RENAME TO mappings').run()
+    db.hydrusrv.prepare('ALTER TABLE mime_types_new RENAME TO mime_types').run()
     db.hydrusrv.prepare('ALTER TABLE tag_counts_new RENAME TO tag_counts').run()
     db.hydrusrv.prepare('ALTER TABLE file_counts_new RENAME TO file_counts').run()
 
     db.hydrusrv.prepare(
-      `CREATE INDEX idx_mappings_file_tags_id ON mappings(file_tags_id)`
+      'CREATE INDEX idx_mappings_file_tags_id ON mappings(file_tags_id)'
     ).run()
     db.hydrusrv.prepare(
-      `CREATE INDEX idx_mappings_tag_id ON mappings(tag_id)`
+      'CREATE INDEX idx_mappings_tag_id ON mappings(tag_id)'
     ).run()
   },
+  getTotals () {
+    return db.hydrusrv.prepare(
+      `SELECT COUNT(*) FROM namespaces
+        UNION
+      SELECT COUNT(*) FROM tags
+        UNION
+      SELECT COUNT(*) FROM files
+        UNION
+      SELECT COUNT(*) FROM mappings`
+    ).pluck().all().map(
+      (count, i) => ['namespaces: ', 'tag: ', 'files: ', 'mappings: '][i] +
+        count
+    ).join(', ')
+  },
   cleanUp () {
-    db.hydrusrv.prepare('VACUUM').run()
-    db.hydrusrv.pragma('wal_checkpoint(TRUNCATE)')
+    try {
+      db.hydrusrv.prepare('VACUUM').run()
+      db.hydrusrv.pragma('wal_checkpoint(TRUNCATE)')
+    } catch (err) {
+      console.info(
+        'could not clean up after succesful sync, will try again on the next' +
+          'run.'
+      )
+    }
   }
 }

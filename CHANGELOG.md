@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [3.0.0] - 2018-12-28
+
+### Added
+
++ Added `tag_count` field to `files` table
++ Added `mime_types` table
+
+### Changed
+
++ Cleaned up code
++ Updated dependencies
+
+### Fixed
+
++ Fixed wrong exit code when erroring on cleanup
+
 ## [2.0.0] - 2018-12-09
 
 ### Added
@@ -65,7 +81,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 + Initial release
 
-[Unreleased]: https://github.com/mserajnik/hydrusrv-sync/compare/2.0.0...develop
+[Unreleased]: https://github.com/mserajnik/hydrusrv-sync/compare/3.0.0...develop
+[3.0.0]: https://github.com/mserajnik/hydrusrv-sync/compare/2.0.0...3.0.0
 [2.0.0]: https://github.com/mserajnik/hydrusrv-sync/compare/1.4.1...2.0.0
 [1.4.1]: https://github.com/mserajnik/hydrusrv-sync/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/mserajnik/hydrusrv-sync/compare/1.3.0...1.4.0
