@@ -12,6 +12,7 @@ or automated (e.g., via cron job), depending on your needs.
 + [Install](#install)
   + [Dependencies](#dependencies)
   + [Updating](#updating)
+    + [Upgrading from 2.x to 3.x](#upgrading-from-2x-to-3x)
     + [Upgrading from 1.x to 2.x](#upgrading-from-1x-to-2x)
 + [Usage](#usage)
   + [Configuration](#configuration)
@@ -41,7 +42,7 @@ directly if you cannnot resolve your issues.
 
 ### Dependencies
 
-+ [hydrusrv][hydrusrv] (`5.x` for hydrusrv-sync `2.x`)
++ [hydrusrv][hydrusrv] (`6.x` for hydrusrv-sync `3.x`)
 + [hydrus server][hydrus-server] (installing and running the server is quite
   difficult and not recommended for people who have no prior experience with
   hydrus; see [here][hydrus-server-installation] for installation instructions)
@@ -71,6 +72,14 @@ are therefore always safe to simply install via the routine mentioned before.
 
 When necessary, this section will be expanded with upgrade guides to new major
 versions.
+
+#### Upgrading from 2.x to 3.x
+
+Upgrading from `2.x` to `3.x` can be done via `git pull && yarn`.
+
+The major version bump was made due to the incompatibility of `2.x` with
+hydrusrv `6.x`. So if you are using that, you need to upgrade hydrusrv-sync to
+`3.x`.
 
 #### Upgrading from 1.x to 2.x
 
