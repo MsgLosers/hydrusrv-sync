@@ -42,7 +42,7 @@ directly if you cannnot resolve your issues.
 
 ### Dependencies
 
-+ [hydrusrv][hydrusrv] (`6.x` for hydrusrv-sync `3.x`)
++ [hydrusrv][hydrusrv] (`6.x` or `7.x` for hydrusrv-sync `3.x`)
 + [hydrus server][hydrus-server] (installing and running the server is quite
   difficult and not recommended for people who have no prior experience with
   hydrus; see [here][hydrus-server-installation] for installation instructions)
@@ -78,16 +78,16 @@ versions.
 Upgrading from `2.x` to `3.x` can be done via `git pull && yarn`.
 
 The major version bump was made due to the incompatibility of `2.x` with
-hydrusrv `6.x`. So if you are using that, you need to upgrade hydrusrv-sync to
-`3.x`.
+hydrusrv `6.x` and `7.x`. So if you are using one of those versions, you need
+to upgrade hydrusrv-sync to `3.x`.
 
 #### Upgrading from 1.x to 2.x
 
 Upgrading from `1.x` to `2.x` can be done via `git pull && yarn`.
 
 The major version bump was made due to the incompatibility of `1.x` with
-hydrusrv `5.x`. So if you are using that, you need to upgrade hydrusrv-sync to
-`2.x`.
+hydrusrv `5.x`. So if you are using that version, you need to upgrade
+hydrusrv-sync to `2.x`.
 
 ## Usage
 
