@@ -1,6 +1,6 @@
 {
   "name": "hydrusrv-sync",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "A tool to sync content from hydrus server to hydrusrv",
   "keywords": [
     "hydrusrv",
