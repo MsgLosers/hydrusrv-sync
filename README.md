@@ -3,6 +3,8 @@
 > A tool to sync content from [hydrus server][hydrus-server] to
 > [hydrusrv][hydrusrv]
 
+__Adandoned: hydrusrv-sync is no longer maintained.__
+
 hydrusrv-sync is a tool to sync content from [hydrus server][hydrus-server]'s
 databases to [hydrusrv][hydrusrv]'s content database. It can be run manually
 or automated (e.g., via cron job), depending on your needs.
